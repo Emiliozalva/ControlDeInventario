@@ -5,6 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Margin="0,0,0,-16"/>
+        Title="Sistema de inventario" Height="450" Width="800">
+    <Grid HorizontalAlignment="Center" Width="800" Height="152" VerticalAlignment="Top" RenderTransformOrigin="0.642,0.152">
+        <Grid HorizontalAlignment="Center" Margin="0,152,0,-282" Width="798">
+            <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Height="282" VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="798"/>
+        </Grid>
+        <Button Content="Agregar producto" Background="#FF6B6B" Margin="27,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"/>
+        <Button Content="Eliminar producto" Background="#3498DB" Margin="173,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"/>
+        <Button Content="Administrar prestamos" Background="#2ECC71" Margin="325,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"/>
+        <Button Content="Ver tickets" Background="#F1C40F" Margin="483,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"/>
+        <Button Content="Generar orden&#xD;&#xA;   de pedido" Background="#9B59B6" Margin="638,40,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="130"/>
+
+    </Grid>
 </Window>
