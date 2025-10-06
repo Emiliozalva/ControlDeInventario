@@ -1,0 +1,84 @@
+## Archivos y carpetas de Visual Studio
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsidx
+*.dbmdl
+*.jfm
+
+## Carpetas de compilación
+bin/
+obj/
+Debug/
+Release/
+x64/
+x86/
+[Aa]rtifacts/
+
+## Archivos de dependencias temporales
+*.cache
+*.log
+*.tlog
+*.pdb
+*.tmp
+*.svclog
+*.wixproj*
+*.opendb
+
+## Archivos de publicación y empaquetado
+publish/
+_PublishedWebsites/
+TestResults/
+*.Publish.xml
+
+## Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+
+## Archivos de usuario
+*.userprefs
+*.csproj.user
+*.rsuser
+
+## Archivos de Unity (si el proyecto usa Unity)
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+MemoryCaptures/
+UserSettings/
+Assets/AssetStoreTools*
+
+# Archivos de paquetes (NuGet)
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+*.nuspec
+
+## Archivos de configuración del sistema
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+
+## Archivos de backups o temporales
+*.bak
+*.old
+*.orig
+*.swp
+*.swn
+*.swo
+*.tmp
+~$*
+
+## Archivos generados por OneDrive o similares
+*.lnk
+*.stackdump
+*.icloud
+*.oneDrive
