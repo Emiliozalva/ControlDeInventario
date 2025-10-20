@@ -76,5 +76,10 @@ namespace SistemaDeInventarioASOEM.clases
             _cantStock = _cantStock - n;
             if(_cantStock < 0) { _cantStock = 0; }
         }
+        void agregarPrestamo(/* Definir luegos los parametros */) { _cantPrestada++; /* Cambiar esto despues, agregar logica */ }
+        void eliminarPrestamo( /* Definir luegos los parametros */) { _cantPrestada--; /*Cambiar esto despues, agregar logica */ }
+        void agregarCantidadPrestada() { }
+        void eliminarCantidadPrestada() { } 
+        
     }
 }
