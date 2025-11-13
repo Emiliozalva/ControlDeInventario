@@ -17,7 +17,7 @@ namespace SistemaDeInventarioASOEM.clases
         {
             string nombreArchivoDB = "BaseProductos.db";
 
-            // --- 1. Definir Rutas ---
+            
 
             // Ruta de Destino (AppData): C:\Users\<tu_usuario>\AppData\Local\SistemaDeInventarioASOEM
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -45,15 +45,14 @@ namespace SistemaDeInventarioASOEM.clases
             }
 
             // --- 3. Conexión ---
-            // La conexión SIEMPRE apunta a la copia en AppData (la que es editable)
-            _connectionString = $"Data Source={rutaDestinoDB}";
+            
+            _connectionString = $"Data Source={rutaDestinoDB}"; // La conexión SIEMPRE apunta a la copia en AppData (la que es editable)
 
             // --- 4. Inicializar/Arreglar Tablas ---
             // Esto asegura que tus tablas tengan Claves Primarias.
             // No borra datos existentes.
             InicializarEstructuraDB();
         }
-
         /// <summary>
         /// Asegura que las tablas existan y tengan la estructura correcta
         /// (especialmente Claves Primarias).
@@ -132,7 +131,7 @@ namespace SistemaDeInventarioASOEM.clases
                         marca = @marca, 
                         modelo = @modelo,
                         cantidadPrestada = @cantidadPrestada
-                    WHERE IDproducto = @IDproducto;"; // Actualiza usando la PK
+                    WHERE IDproducto = @IDproducto;"; 
                 connection.Execute(sql, producto);
             }
         }
