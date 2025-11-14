@@ -33,6 +33,13 @@
                     Background="#3498DB" Foreground="White" FontWeight="Bold"
                     Width="130" Height="40" Margin="5"/>
 
+            <!-- ****** BOTÓN CORREGIDO ****** -->
+            <Button Content="Agregar Stock" 
+                    Command="{Binding AbrirVentanaAgregarStockCommand}"
+                    Background="#E67E22" Foreground="White" FontWeight="Bold"
+                    Width="130" Height="40" Margin="5"/>
+            <!-- ******************************** -->
+
             <Button Content="Administrar prestamos" 
                     Background="#2ECC71" Foreground="White" FontWeight="Bold"
                     Width="150" Height="40" Margin="5"/>

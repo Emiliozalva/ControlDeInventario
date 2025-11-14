@@ -12,19 +12,21 @@ namespace SistemaDeInventarioASOEM.clases
         public int IDproducto { get; set; }
 
         // La Columna se llama "producto"
-        public string producto { get; set; }
+        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
+        public string? producto { get; set; }
 
         // La Columna se llama "cantidadStock"
         public int cantidadStock { get; set; }
 
         // La Columna se llama "marca"
-        public string marca { get; set; }
+        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
+        public string? marca { get; set; }
 
         // La Columna se llama "modelo"
-        public string modelo { get; set; }
+        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
+        public string? modelo { get; set; }
 
         // La Columna se llama "cantidadPrestada"
         public int cantidadPrestada { get; set; }
     }
 }
-

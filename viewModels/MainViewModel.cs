@@ -46,26 +46,14 @@ namespace SistemaDeInventarioASOEM.viewModels
             }
         }
 
-        // --- COMANDOS ---
-
         [RelayCommand]
         private void AbrirVentanaAgregar()
         {
             // Lógica para abrir la ventana que ya tienes en la carpeta 'windows'
-
-            // 1. Instanciamos el VM de la ventana hija
             var vmHijo = new VentanaAgregarProductoViewModel(_dbService);
-
-            // 2. Instanciamos la Vista
             var ventana = new VentanaAgregarProducto();
-
-            // 3. Conectamos
             ventana.DataContext = vmHijo;
-
-            // 4. Mostramos
             ventana.ShowDialog();
-
-            // 5. Al volver, recargamos la lista para ver el cambio
             CargarProductos();
         }
 
