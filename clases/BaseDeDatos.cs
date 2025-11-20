@@ -1,11 +1,13 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Dapper; 
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper; 
-using System.IO;
+using System.Windows;
 
 namespace SistemaDeInventarioASOEM.clases
 {
@@ -190,6 +192,135 @@ namespace SistemaDeInventarioASOEM.clases
             {
                 string sql = "DELETE FROM prestamos WHERE Id = @Id;";
                 connection.Execute(sql, new { Id = idPrestamo });
+            }
+        }
+        public void RegistrarNuevoPrestamo(Prestamo nuevoPrestamo)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Iniciamos una TRANSACCIÓN.
+                // Esto asegura que si algo falla a la mitad, no se descuadre el inventario.
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Validar si hay Stock disponible
+                        // (Es mejor verificarlo en la BD por si alguien más lo prestó hace un milisegundo)
+                        var stockActual = connection.QueryFirstOrDefault<int>(
+                            "SELECT cantidadStock FROM stock WHERE IDproducto = @Id",
+                            new { Id = nuevoPrestamo.idProducto },
+                            transaction);
+
+                        if (stockActual <= 0)
+                        {
+                            throw new Exception("No hay stock disponible para realizar el préstamo.");
+                        }
+
+                        // 2. Insertar el registro del préstamo
+                        string sqlPrestamo = @"
+                    INSERT INTO prestamos (area, persona, fecha1, fecha2, description, estado, idProducto) 
+                    VALUES (@area, @persona, @fecha1, @fecha2, @description, @estado, @idProducto);";
+
+                        connection.Execute(sqlPrestamo, nuevoPrestamo, transaction);
+
+                        // 3. Actualizar el Stock del Producto
+                        // Restamos 1 al Stock disponible y Sumamos 1 a Prestada
+                        string sqlUpdateStock = @"
+                    UPDATE stock 
+                    SET cantidadStock = cantidadStock - 1,
+                        cantidadPrestada = cantidadPrestada + 1
+                    WHERE IDproducto = @Id;";
+
+                        connection.Execute(sqlUpdateStock, new { Id = nuevoPrestamo.idProducto }, transaction);
+
+                        // Si todo salió bien, guardamos los cambios.
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        // Si hubo error, deshacemos todo.
+                        transaction.Rollback();
+                        throw; // Re-lanzamos el error para que la UI lo muestre
+                    }
+                }
+            }
+        }
+
+        // MÉTODO PARA DEVOLVER (Entrada de inventario)
+        public void RegistrarDevolucion(int idPrestamo, int idProducto, long fechaDevolucion)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Actualizar el Préstamo (Poner fecha fin y estado Devuelto)
+                        string sqlPrestamo = @"
+                    UPDATE prestamos 
+                    SET fecha2 = @FechaFin, 
+                        estado = @NuevoEstado 
+                    WHERE Id = @IdPrestamo;";
+
+                        connection.Execute(sqlPrestamo, new
+                        {
+                            FechaFin = fechaDevolucion,
+                            NuevoEstado = (int)EstadoPrestamo.Devuelto, // 2
+                            IdPrestamo = idPrestamo
+                        }, transaction);
+
+                        // 2. Actualizar el Stock
+                        // Sumamos 1 al Stock disponible y Restamos 1 a Prestada
+                        string sqlStock = @"
+                    UPDATE stock 
+                    SET cantidadStock = cantidadStock + 1,
+                        cantidadPrestada = cantidadPrestada - 1
+                    WHERE IDproducto = @IdProd;";
+
+                        connection.Execute(sqlStock, new { IdProd = idProducto }, transaction);
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+private void Prestar()
+        {
+            try
+            {
+                var prestamo = new Prestamo
+                {
+                    area = Area,
+                    persona = Persona,
+                    description = Descripcion,
+                    idProducto = ProductoSeleccionado.IDproducto,
+
+                    // Fechas como Ticks (Enteros)
+                    fecha1 = DateTime.Now.Ticks,
+                    fecha2 = 0, // 0 significa "aún no devuelto"
+
+                    estado = (int)EstadoPrestamo.Activo // 1
+                };
+
+                // Llamamos al método con transacción
+                _dbService.RegistrarNuevoPrestamo(prestamo);
+
+                MessageBox.Show("Préstamo registrado exitosamente.");
+                CerrarVentana();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
     }

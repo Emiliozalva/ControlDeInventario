@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SistemaDeInventarioASOEM.viewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +18,25 @@ namespace SistemaDeInventarioASOEM.windows
     /// <summary>
     /// Lógica de interacción para VentanaAgregarProducto.xaml
     /// </summary>
+
+
+namespace SistemaDeInventarioASOEM.windows
+{
     public partial class VentanaAgregarProducto : Window
     {
         public VentanaAgregarProducto()
         {
             InitializeComponent();
+
+            // Nos suscribimos al evento cuando el DataContext cambie (cuando se asigne el ViewModel)
+            this.DataContextChanged += (sender, e) =>
+            {
+                if (e.NewValue is VentanaAgregarProductoViewModel vm)
+                {
+                    // Cuando el ViewModel diga "SolicitudCerrar", cerramos esta ventana
+                    vm.SolicitudCerrar += () => this.Close();
+                }
+            };
         }
     }
 }
