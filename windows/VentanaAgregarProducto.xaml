@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM.windows"
         mc:Ignorable="d"
         Title="Agregar Nuevo Producto" 
-        Height="338" Width="599"
+        Height="450" Width="500"
+        MinWidth="400" MinHeight="350"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="CanResizeWithGrip">
 
-    <!-- Recursos locales para estilos rápidos en esta ventana -->
     <Window.Resources>
         <Style TargetType="TextBox">
             <Setter Property="Height" Value="28"/>
@@ -25,98 +25,58 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,10,15"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
     </Window.Resources>
 
-    <!-- Borde exterior para dar un poco de aire -->
     <Border Padding="20" Background="#F5F5F5">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <!-- Título -->
                 <RowDefinition Height="*"/>
-                <!-- Formulario -->
                 <RowDefinition Height="Auto"/>
-                <!-- Botones -->
             </Grid.RowDefinitions>
 
-            <!-- 1. TÍTULO -->
             <TextBlock Grid.Row="0" 
                        Text="Registrar Nuevo Producto" 
-                       FontSize="22" 
-                       FontWeight="Bold" 
-                       Foreground="#333"
-                       Margin="0,0,0,20"
-                       HorizontalAlignment="Center"/>
+                       FontSize="22" FontWeight="Bold" Foreground="#333"
+                       Margin="0,0,0,20" HorizontalAlignment="Center"/>
 
-            <!-- 2. FORMULARIO -->
-            <!-- Usamos un Grid de 2 columnas para alinear etiquetas y campos -->
             <Grid Grid.Row="1" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <!-- Etiquetas (se ajustan al texto) -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Campos (ocupan el resto) -->
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <!-- Fila 1: Nombre -->
-                <Label Grid.Column="0" Content="Nombre del Producto:"/>
-                <TextBox Grid.Column="1" 
+                <Label Grid.Row="0" Grid.Column="0" Content="Nombre del Producto:"/>
+                <TextBox Grid.Row="0" Grid.Column="1" 
                          Text="{Binding ProductoNombre, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <!-- Fila 2: Marca -->
-                <!-- Usamos StackPanel para apilar filas de controles si no queremos Grid.RowDefinitions complejos, 
-                     pero aquí usaré Margins en el estilo para separar verticalmente -->
-                <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Margin="0,45,0,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="160"/>
-                            <!-- Ancho fijo para etiquetas para alinear -->
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                <Label Grid.Row="1" Grid.Column="0" Content="Marca:"/>
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         Text="{Binding Marca, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <!-- Marca -->
-                        <Label Grid.Column="0" Content="Marca:" Margin="0,0,0,15"/>
-                        <TextBox Grid.Column="1" Text="{Binding Marca, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
+                <Label Grid.Row="2" Grid.Column="0" Content="Modelo:"/>
+                <TextBox Grid.Row="2" Grid.Column="1" 
+                         Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="160"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Modelo -->
-                        <Label Grid.Column="0" Content="Modelo:" Margin="0,0,0,15"/>
-                        <TextBox Grid.Column="1" Text="{Binding Modelo, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="160"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Stock Inicial -->
-                        <Label Grid.Column="0" Content="Stock Inicial:" Margin="0,0,0,15"/>
-                        <TextBox Grid.Column="1" Text="{Binding CantidadStock, UpdateSourceTrigger=PropertyChanged}"/>
-                    </Grid>
-                </StackPanel>
+                <Label Grid.Row="3" Grid.Column="0" Content="Stock Inicial:"/>
+                <TextBox Grid.Row="3" Grid.Column="1" 
+                         Text="{Binding CantidadStock, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
-            <!-- 3. BOTONES -->
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <!-- Botón Guardar -->
-                <!-- IsDefault="True" permite activar con ENTER -->
                 <Button Content="Guardar" 
                         Command="{Binding GuardarCommand}"
                         IsDefault="True"
-                        Background="#2ECC71" 
-                        Foreground="White" 
-                        FontWeight="Bold"
-                        Width="100" Height="35" 
-                        Margin="0,0,10,0"
-                        Cursor="Hand">
+                        Background="#2ECC71" Foreground="White" FontWeight="Bold"
+                        Width="100" Height="35" Margin="0,0,10,0" Cursor="Hand">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="5"/>
@@ -124,16 +84,11 @@
                     </Button.Resources>
                 </Button>
 
-                <!-- Botón Cancelar -->
-                <!-- IsCancel="True" permite cerrar con ESCAPE -->
                 <Button Content="Cancelar" 
                         Command="{Binding CancelarCommand}"
                         IsCancel="True"
-                        Background="#E74C3C" 
-                        Foreground="White" 
-                        FontWeight="Bold"
-                        Width="100" Height="35"
-                        Cursor="Hand">
+                        Background="#E74C3C" Foreground="White" FontWeight="Bold"
+                        Width="100" Height="35" Cursor="Hand">
                     <Button.Resources>
                         <Style TargetType="Border">
                             <Setter Property="CornerRadius" Value="5"/>

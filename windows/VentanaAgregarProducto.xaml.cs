@@ -13,30 +13,29 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace SistemaDeInventarioASOEM.windows
-{
+
+
     /// <summary>
     /// Lógica de interacción para VentanaAgregarProducto.xaml
     /// </summary>
 
-
-namespace SistemaDeInventarioASOEM.windows
+    namespace SistemaDeInventarioASOEM.windows 
 {
-    public partial class VentanaAgregarProducto : Window
-    {
-        public VentanaAgregarProducto()
+        public partial class VentanaAgregarProducto : Window
         {
-            InitializeComponent();
-
-            // Nos suscribimos al evento cuando el DataContext cambie (cuando se asigne el ViewModel)
-            this.DataContextChanged += (sender, e) =>
+            public VentanaAgregarProducto()
             {
-                if (e.NewValue is VentanaAgregarProductoViewModel vm)
+                InitializeComponent();
+
+                // Nos suscribimos al evento cuando el DataContext cambie (cuando se asigne el ViewModel)
+                this.DataContextChanged += (sender, e) =>
                 {
-                    // Cuando el ViewModel diga "SolicitudCerrar", cerramos esta ventana
-                    vm.SolicitudCerrar += () => this.Close();
-                }
-            };
+                    if (e.NewValue is VentanaAgregarProductoViewModel vm)
+                    {
+                        // Cuando el ViewModel diga "SolicitudCerrar", cerramos esta ventana
+                        vm.SolicitudCerrar += () => this.Close();
+                    }
+                };
+            }
         }
     }
-}
