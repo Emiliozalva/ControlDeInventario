@@ -20,7 +20,7 @@ namespace SistemaDeInventarioASOEM.viewModels
         // --- Propiedades enlazadas al XAML ---
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(GuardarCommand))] // Avisa al botón si debe habilitarse
+        [NotifyCanExecuteChangedFor(nameof(GuardarCommand))] 
         private string? _productoNombre;
 
         [ObservableProperty]
