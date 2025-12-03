@@ -59,7 +59,7 @@ namespace SistemaDeInventarioASOEM.viewModels
 
         [RelayCommand]
         private void BorrarProducto()
-        {
+        {                                           ///RECORDAR CAMBIAR CUNADO SE ACTUALICEN LOS DEMOS ARCHIVOS
             if (ProductoSeleccionado != null)
             {
                 _dbService.BorrarProducto(ProductoSeleccionado.IDproducto);

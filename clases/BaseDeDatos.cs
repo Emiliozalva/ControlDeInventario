@@ -79,7 +79,14 @@ namespace SistemaDeInventarioASOEM.clases
                 return connection.Query<Producto>("SELECT * FROM stock").ToList();
             }
         }
-
+        public Producto? ObtenerProductoPorId(int id)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                string sql = "SELECT * FROM stock WHERE IDproducto = @Id;";
+                return connection.QueryFirstOrDefault<Producto>(sql, new { Id = id });
+            }
+        }
         public void AgregarProducto(Producto producto)
         {
             using (var connection = new SqliteConnection(_connectionString))

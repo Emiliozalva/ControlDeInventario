@@ -5,8 +5,132 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM.windows"
         mc:Ignorable="d"
-        Title="VentanaEliminarProducto" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Eliminar Producto" Height="350" Width="450"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Margin" Value="0,0,10,10"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="20" Background="#FFF5F5"> <!-- Fondo rojizo suave -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Encabezado de Advertencia -->
+            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
+                <TextBlock Text="⚠️ ATENCIÓN" 
+                           FontSize="24" FontWeight="Bold" Foreground="#C0392B" 
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="¿Está seguro de eliminar este producto?" 
+                           FontSize="16" Foreground="#555"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Esta acción no se puede deshacer." 
+                           FontSize="12" Foreground="#777" FontStyle="Italic"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Datos del Producto (Solo Lectura) -->
+            <Border Grid.Row="1" Background="White" CornerRadius="5" Padding="15" Margin="10,0" BorderBrush="#E0E0E0" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Nombre:"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ProductoNombre}" FontWeight="Bold"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Marca:"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Marca}"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Modelo:"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Modelo}"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" Content="Stock Actual:"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding StockActual}"/>
+                </Grid>
+            </Border>
+
+            <!-- Botones -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <!-- Botón ELIMINAR -->
+                <Button Content="ELIMINAR DEFINITIVAMENTE" 
+                        Command="{Binding EliminarCommand}"
+                        Width="200" Height="40" Margin="0,0,10,0">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#C0392B"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="borde" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="borde" Property="Background" Value="#E74C3C"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <!-- Botón Cancelar -->
+                <Button Content="Cancelar" 
+                        Command="{Binding CancelarCommand}"
+                        IsCancel="True"
+                        Width="100" Height="40">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#95A5A6"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="borde" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="borde" Property="Background" Value="#7F8C8D"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>
