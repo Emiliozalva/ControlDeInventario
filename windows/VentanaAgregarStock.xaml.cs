@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SistemaDeInventarioASOEM.viewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,19 @@ using System.Windows.Shapes;
 
 namespace SistemaDeInventarioASOEM.windows
 {
-    /// <summary>
-    /// Lógica de interacción para VentanaAgregarStock.xaml
-    /// </summary>
     public partial class VentanaAgregarStock : Window
     {
         public VentanaAgregarStock()
         {
             InitializeComponent();
+
+            this.DataContextChanged += (sender, e) =>
+            {
+                if (e.NewValue is VentanaAgregarStockViewModel vm)
+                {
+                    vm.SolicitudCerrar += () => this.Close();
+                }
+            };
         }
     }
 }

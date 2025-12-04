@@ -15,14 +15,12 @@ namespace SistemaDeInventarioASOEM.clases
         {
             string nombreArchivoDB = "BaseProductos.db";
 
-            // Rutas
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string appFolderPath = Path.Combine(appDataPath, "SistemaDeInventarioASOEM");
             Directory.CreateDirectory(appFolderPath);
             string rutaDestinoDB = Path.Combine(appFolderPath, nombreArchivoDB);
             string rutaOrigenDB = Path.Combine(AppContext.BaseDirectory, nombreArchivoDB);
 
-            // Copiar si no existe
             if (!File.Exists(rutaDestinoDB))
             {
                 if (File.Exists(rutaOrigenDB))
@@ -34,7 +32,30 @@ namespace SistemaDeInventarioASOEM.clases
             _connectionString = $"Data Source={rutaDestinoDB}";
             InicializarEstructuraDB();
         }
+        public void ActualizarStock(Producto producto)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                string sql = @"
+            UPDATE stock 
+            SET producto = @producto, 
+                cantidadStock = @cantidadStock, 
+                marca = @marca, 
+                modelo = @modelo, 
+                cantidadPrestada = @cantidadPrestada
+            WHERE IDproducto = @IDproducto;";
 
+                connection.Execute(sql, producto);
+            }
+        }
+        public void ActualizarStock(int id, int nuevaCantidad)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                string sql = "UPDATE stock SET cantidadStock = @cantidadStock WHERE IDproducto = @Id;";
+                connection.Execute(sql, new { cantidadStock = nuevaCantidad, Id = id });
+            }
+        }
         private void InicializarEstructuraDB()
         {
             using (var connection = new SqliteConnection(_connectionString))
@@ -98,7 +119,34 @@ namespace SistemaDeInventarioASOEM.clases
                 connection.Execute(sql, producto);
             }
         }
+        public bool BorrarProducto(string terminoBusqueda)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                // Intentamos ver si el término es un número (ID) o texto (Nombre)
+                bool esId = int.TryParse(terminoBusqueda, out int idPosible);
 
+                string sql;
+                int filasAfectadas = 0;
+
+                if (esId)
+                {
+                    // Si es número, intentamos borrar por ID
+                    sql = "DELETE FROM stock WHERE IDproducto = @id";
+                    filasAfectadas = connection.Execute(sql, new { id = idPosible });
+                }
+
+                // Si no se borró nada por ID (o no era número), intentamos borrar por Nombre
+                if (filasAfectadas == 0)
+                {
+                    // COLLATE NOCASE hace que no importe mayúsculas/minúsculas
+                    sql = "DELETE FROM stock WHERE producto = @nombre COLLATE NOCASE";
+                    filasAfectadas = connection.Execute(sql, new { nombre = terminoBusqueda });
+                }
+
+                return filasAfectadas > 0; // Retorna true si borró algo
+            }
+        }
         public void BorrarProducto(int id)
         {
             using (var connection = new SqliteConnection(_connectionString))
@@ -106,8 +154,5 @@ namespace SistemaDeInventarioASOEM.clases
                 connection.Execute("DELETE FROM stock WHERE IDproducto = @Id;", new { Id = id });
             }
         }
-
-        // --- AQUÍ TERMINA LA CLASE ---
-        // ¡Asegúrate de no tener código pegado después de esta llave!
     }
 }

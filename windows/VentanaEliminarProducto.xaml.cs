@@ -12,16 +12,29 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using SistemaDeInventarioASOEM.viewModels;
+
 namespace SistemaDeInventarioASOEM.windows
 {
-    /// <summary>
-    /// Lógica de interacción para VentanaEliminarProducto.xaml
-    /// </summary>
     public partial class VentanaEliminarProducto : Window
     {
         public VentanaEliminarProducto()
         {
             InitializeComponent();
+            this.DataContextChanged += (sender, args) =>
+            {
+                if (args.NewValue is VentanaEliminarProductoViewModel vm)
+                {
+                    vm.SolicitudCerrar += () => this.Close();
+                }
+            };
+            this.Loaded += (sender, args) =>
+            {
+                if (TxtInput != null)
+                {
+                    TxtInput.Focus();
+                }
+            };
         }
     }
 }

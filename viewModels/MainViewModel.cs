@@ -8,30 +8,24 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 using SistemaDeInventarioASOEM.clases;
 using SistemaDeInventarioASOEM.windows;
-
+using System.Windows; 
 
 namespace SistemaDeInventarioASOEM.viewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        // 1. Servicio de Base de Datos
         private readonly BaseDeDatos _dbService;
 
-        // 2. Lista de Productos (Enlazada al DataGrid)
         [ObservableProperty]
         private ObservableCollection<Producto> _productos;
 
-        // 3. Producto Seleccionado (Para borrar o editar)
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(BorrarProductoCommand))]
         private Producto? _productoSeleccionado;
 
         public MainViewModel()
         {
             _dbService = new BaseDeDatos();
             Productos = new ObservableCollection<Producto>();
-
-            // Cargar datos al iniciar
             CargarProductos();
         }
 
@@ -49,7 +43,6 @@ namespace SistemaDeInventarioASOEM.viewModels
         [RelayCommand]
         private void AbrirVentanaAgregar()
         {
-            // Lógica para abrir la ventana que ya tienes en la carpeta 'windows'
             var vmHijo = new VentanaAgregarProductoViewModel(_dbService);
             var ventana = new VentanaAgregarProducto();
             ventana.DataContext = vmHijo;
@@ -58,12 +51,29 @@ namespace SistemaDeInventarioASOEM.viewModels
         }
 
         [RelayCommand]
+        private void AbrirVentanaAgregarStock()
+        {
+            var vmAgregarStock = new VentanaAgregarStockViewModel(_dbService);
+            var ventana = new VentanaAgregarStock();
+            ventana.DataContext = vmAgregarStock;
+            ventana.ShowDialog();
+            CargarProductos();
+        }
+
+        [RelayCommand]
         private void BorrarProducto()
-        {                                           ///RECORDAR CAMBIAR CUNADO SE ACTUALICEN LOS DEMOS ARCHIVOS
-            if (ProductoSeleccionado != null)
+        {
+            try
             {
-                _dbService.BorrarProducto(ProductoSeleccionado.IDproducto);
+                var vmEliminar = new VentanaEliminarProductoViewModel(_dbService);
+                var ventana = new VentanaEliminarProducto();
+                ventana.DataContext = vmEliminar;
+                ventana.ShowDialog();
                 CargarProductos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al abrir la ventana de eliminación: {ex.Message}");
             }
         }
     }

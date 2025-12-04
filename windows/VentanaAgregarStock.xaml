@@ -5,8 +5,118 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM.windows"
         mc:Ignorable="d"
-        Title="VentanaAgregarStock" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Actualizar Stock" Height="300" Width="450"
+        WindowStartupLocation="CenterOwner" ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,10,15"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="20" Background="#FFF8E1">
+        <!-- Fondo Amarillo suave -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="📦 ACTUALIZAR STOCK" 
+                       FontSize="20" FontWeight="Bold" Foreground="#D68910"
+                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <Grid Grid.Row="1" VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="ID del Producto:"/>
+                <TextBox Grid.Row="0" Grid.Column="1" 
+                         Text="{Binding IdProductoInput, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Cantidad (+/-):"/>
+                <TextBox Grid.Row="1" Grid.Column="1" 
+                         Text="{Binding CantidadInput, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Usa números positivos para sumar y negativos para restar (ej: -5)"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="(Ej: 10 o -5)" 
+                           HorizontalAlignment="Right" VerticalAlignment="Center" 
+                           Foreground="Gray" Margin="0,0,10,15" IsHitTestVisible="False"/>
+            </Grid>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                <Button Command="{Binding ActualizarStockCommand}"
+                        Content="Actualizar" IsDefault="True"
+                        Width="100" Height="35" Margin="0,0,10,0">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#F39C12"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#D68910"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="bd" Property="Background" Value="#FAD7A0"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button Command="{Binding CancelarCommand}"
+                        IsCancel="True"
+                        Content="Cancelar"
+                        Width="100" Height="35">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="#95A5A6"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#7F8C8D"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
 </Window>
