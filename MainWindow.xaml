@@ -39,10 +39,11 @@
                     Width="130" Height="40" Margin="5"/>
 
             <Button Content="Administrar prestamos" 
+                    Command="{Binding AbrirAdministrarPrestamosCommand}"
                     Background="#2ECC71" Foreground="White" FontWeight="Bold"
                     Width="150" Height="40" Margin="5"/>
 
-            <!-- BOTÓN "Ver tickets" ELIMINADO -->
+
 
             <Button Content="Generar orden" 
                     Background="#9B59B6" Foreground="White" FontWeight="Bold"

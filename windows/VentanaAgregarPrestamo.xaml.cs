@@ -1,5 +1,4 @@
-﻿using SistemaDeInventarioASOEM.viewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,23 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+
+using SistemaDeInventarioASOEM.viewModels;
+
 namespace SistemaDeInventarioASOEM.windows
 {
-    /// <summary>
-    /// Lógica de interacción para VentanaAdministrarPrestamo.xaml
-    /// </summary>
-    public partial class VentanaAdministrarPrestamo : Window
+    public partial class VentanaAgregarPrestamo : Window
     {
-        public VentanaAdministrarPrestamo()
+        public VentanaAgregarPrestamo()
         {
             InitializeComponent();
-            this.DataContextChanged += (sender, args) =>
+            this.DataContextChanged += (s, e) =>
             {
-                if (args.NewValue is VentanaAdministrarPrestamoViewModel vm)
-                {
-                    // Cuando el ViewModel diga "SolicitudCerrar", esta ventana ejecuta Close()
+                if (e.NewValue is VentanaAgregarPrestamoViewModel vm)
                     vm.SolicitudCerrar += () => this.Close();
-                }
             };
         }
     }

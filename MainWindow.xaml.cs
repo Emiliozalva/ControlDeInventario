@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using SistemaDeInventarioASOEM.viewModels;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +20,14 @@ namespace SistemaDeInventarioASOEM
         public MainWindow()
         {
             InitializeComponent();
+            
+            if (this.DataContext is MainViewModel vm)
+            {
+                vm.SolicitudCerrarVentana += () =>
+                {
+                    this.Close(); 
+                };
+            }
         }
     }
 }

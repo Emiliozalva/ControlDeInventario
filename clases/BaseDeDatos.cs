@@ -154,5 +154,114 @@ namespace SistemaDeInventarioASOEM.clases
                 connection.Execute("DELETE FROM stock WHERE IDproducto = @Id;", new { Id = id });
             }
         }
+        // --- MÉTODOS DE PRÉSTAMOS (Nuevos) ---
+
+        public List<Prestamo> ObtenerTodosLosPrestamos()
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                // Traemos todos los préstamos
+                return connection.Query<Prestamo>("SELECT * FROM prestamos").ToList();
+            }
+        }
+
+        public void RegistrarPrestamo(Prestamo prestamo)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Iniciamos una TRANSACCIÓN: O se hace todo (insertar + descontar) o no se hace nada.
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Verificar si el producto existe y tiene stock
+                        string sqlCheck = "SELECT cantidadStock FROM stock WHERE IDproducto = @id";
+                        int stockActual = connection.ExecuteScalar<int>(sqlCheck, new { id = prestamo.idProducto }, transaction);
+
+                        if (stockActual <= 0)
+                        {
+                            throw new Exception("No hay stock suficiente para realizar este préstamo.");
+                        }
+
+                        // 2. Insertar el préstamo
+                        // Nota: Guardamos fecha1 como Ticks (long) porque tu DB lo pide INTEGER
+                        string sqlInsert = @"
+                            INSERT INTO prestamos (area, persona, fecha1, description, estado, idProducto) 
+                            VALUES (@area, @persona, @fecha1, @description, 1, @idProducto);";
+
+                        // Estado 1 = Activo
+                        connection.Execute(sqlInsert, prestamo, transaction);
+
+                        // 3. Actualizar el Stock (Resta 1 al stock disponible, Suma 1 a prestados)
+                        string sqlUpdateStock = @"
+                            UPDATE stock 
+                            SET cantidadStock = cantidadStock - 1, 
+                                cantidadPrestada = cantidadPrestada + 1 
+                            WHERE IDproducto = @idProducto";
+
+                        connection.Execute(sqlUpdateStock, new { idProducto = prestamo.idProducto }, transaction);
+
+                        // Si todo salió bien, confirmamos los cambios
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        // Si algo falló, deshacemos todo
+                        transaction.Rollback();
+                        throw; // Re-lanzamos el error para que lo vea la ventana
+                    }
+                }
+            }
+        }
+
+        public void DevolverPrestamo(int idPrestamo)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. Obtener el préstamo para saber qué producto es y si ya se devolvió
+                        var prestamoDB = connection.QueryFirstOrDefault<Prestamo>(
+                            "SELECT * FROM prestamos WHERE Id = @id", new { id = idPrestamo }, transaction);
+
+                        if (prestamoDB == null) throw new Exception("El préstamo no existe.");
+                        if (prestamoDB.estado == 0) throw new Exception("Este préstamo ya fue devuelto.");
+
+                        // 2. Marcar préstamo como devuelto (Estado 0) y poner fecha de fin
+                        long fechaDevolucion = DateTime.Now.Ticks;
+                        string sqlUpdatePrestamo = @"
+                            UPDATE prestamos 
+                            SET estado = 0, 
+                                fecha2 = @fechaFin 
+                            WHERE Id = @id";
+
+                        connection.Execute(sqlUpdatePrestamo, new { fechaFin = fechaDevolucion, id = idPrestamo }, transaction);
+
+                        // 3. Devolver el stock (Suma 1 al stock disponible, Resta 1 a prestados)
+                        // Usamos MAX(0, ...) por seguridad para que 'cantidadPrestada' nunca sea negativo
+                        string sqlUpdateStock = @"
+                            UPDATE stock 
+                            SET cantidadStock = cantidadStock + 1, 
+                                cantidadPrestada = MAX(0, cantidadPrestada - 1)
+                            WHERE IDproducto = @idProd";
+
+                        connection.Execute(sqlUpdateStock, new { idProd = prestamoDB.idProducto }, transaction);
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
     }
 }
