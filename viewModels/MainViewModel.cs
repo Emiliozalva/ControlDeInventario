@@ -22,6 +22,11 @@ namespace SistemaDeInventarioASOEM.viewModels
         [ObservableProperty]
         private Producto? _productoSeleccionado;
 
+     
+        public System.Action? SolicitudCerrarVentana;
+   
+
+
         public MainViewModel()
         {
             _dbService = new BaseDeDatos();
@@ -39,7 +44,18 @@ namespace SistemaDeInventarioASOEM.viewModels
                 Productos.Add(p);
             }
         }
+        [RelayCommand]
+        private void AbrirAdministrarPrestamos()
+        {
+            var ventanaPrestamos = new VentanaAdministrarPrestamo();
 
+            var vmPrestamos = new VentanaAdministrarPrestamoViewModel();
+            ventanaPrestamos.DataContext = vmPrestamos; 
+
+            ventanaPrestamos.Show();
+
+            SolicitudCerrarVentana?.Invoke();
+        }
         [RelayCommand]
         private void AbrirVentanaAgregar()
         {

@@ -5,8 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM.windows"
         mc:Ignorable="d"
-        Title="VentanaAdministrarPrestamo" Height="450" Width="800">
+        Title="Administración de Préstamos" Height="500" Width="900"
+        WindowStartupLocation="CenterScreen">
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+
+            <Button Content="⬅ Volver al Stock" 
+                    Command="{Binding VolverCommand}"
+                    Background="#7F8C8D" Foreground="White" FontWeight="Bold"
+                    Width="140" Height="40" Margin="5"/>
+
+            <Button Content="Nuevo Préstamo" 
+                    Command="{Binding AgregarPrestamoCommand}"
+                    Background="#27AE60" Foreground="White" FontWeight="Bold"
+                    Width="140" Height="40" Margin="5"/>
+
+            <Button Content="Eliminar / Devolver" 
+                    Command="{Binding EliminarPrestamoCommand}"
+                    Background="#C0392B" Foreground="White" FontWeight="Bold"
+                    Width="140" Height="40" Margin="5"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Prestamos}"
+                  SelectedItem="{Binding PrestamoSeleccionado}"
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True"
+                  CanUserAddRows="False"
+                  Margin="10" 
+                  BorderBrush="#27AE60" BorderThickness="1"
+                  GridLinesVisibility="Horizontal">
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+
+                <DataGridTextColumn Header="Solicitante" Binding="{Binding persona}" Width="150" FontWeight="SemiBold"/>
+
+                <DataGridTextColumn Header="Área" Binding="{Binding area}" Width="120"/>
+
+                <DataGridTextColumn Header="Fecha Inicio" Binding="{Binding FechaInicio, StringFormat=dd/MM/yyyy}" Width="100"/>
+
+                <DataGridTextColumn Header="Detalle / Producto" Binding="{Binding description}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
