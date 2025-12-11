@@ -74,20 +74,19 @@ namespace SistemaDeInventarioASOEM.clases
                     );
                 ");
 
-                // Tabla Prestamos
                 connection.Execute(@"
-                    CREATE TABLE IF NOT EXISTS prestamos (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        area TEXT NOT NULL,
-                        persona TEXT NOT NULL,
-                        fecha1 INTEGER NOT NULL,
-                        fecha2 INTEGER,
-                        description TEXT,
-                        estado INTEGER NOT NULL,
-                        idProducto INTEGER,
-                        FOREIGN KEY(idProducto) REFERENCES stock(IDproducto)
-                    );
-                ");
+        CREATE TABLE IF NOT EXISTS prestamos (
+        Id INTEGER PRIMARY KEY AUTOINCREMENT,  -- <--- ESTO ES LO QUE FALTABA
+        area TEXT NOT NULL,
+        persona TEXT NOT NULL,
+        fecha1 INTEGER NOT NULL,
+        fecha2 INTEGER,
+        description TEXT,
+        estado INTEGER NOT NULL,
+        idProducto INTEGER,
+        FOREIGN KEY(idProducto) REFERENCES stock(IDproducto)
+    );
+");
             }
         }
 
@@ -160,8 +159,15 @@ namespace SistemaDeInventarioASOEM.clases
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
-                // Traemos todos los préstamos
-                return connection.Query<Prestamo>("SELECT * FROM prestamos").ToList();
+                string sql = @"
+            SELECT 
+                p.*, 
+                s.producto AS NombreProducto 
+            FROM prestamos p
+            INNER JOIN stock s ON p.idProducto = s.IDproducto
+            ORDER BY p.Id DESC";
+
+                return connection.Query<Prestamo>(sql).ToList();
             }
         }
 

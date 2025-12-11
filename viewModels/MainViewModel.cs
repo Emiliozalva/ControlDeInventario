@@ -92,5 +92,13 @@ namespace SistemaDeInventarioASOEM.viewModels
                 MessageBox.Show($"Error al abrir la ventana de eliminación: {ex.Message}");
             }
         }
+        [RelayCommand]
+        private void AbrirGenerarOrden() 
+        {
+            var vm = new VentanaGenerarOrdenViewModel(_dbService);
+            var ventana = new VentanaGenerarOrden();
+            ventana.DataContext = vm;
+            ventana.ShowDialog();
+        }
     }
 }

@@ -15,14 +15,12 @@ namespace SistemaDeInventarioASOEM.viewModels
         private readonly BaseDeDatos _dbService;
         public Action? SolicitudCerrar;
 
-        // Datos del formulario
         [ObservableProperty] private int? _idProductoBusqueda;
         [ObservableProperty] private string _nombreProducto = "Ingrese ID para buscar...";
         [ObservableProperty] private string _persona = string.Empty;
         [ObservableProperty] private string _area = string.Empty;
         [ObservableProperty] private string _descripcion = string.Empty;
 
-        // Propiedad auxiliar para saber si encontramos el producto
         private bool _productoEncontrado = false;
 
         public VentanaAgregarPrestamoViewModel(BaseDeDatos dbService)
@@ -71,7 +69,7 @@ namespace SistemaDeInventarioASOEM.viewModels
                     area = Area,
                     description = Descripcion,
                     fecha1 = DateTime.Now.Ticks,
-                    estado = 1 // 1 = Activo
+                    estado = 1 
                 };
 
                 _dbService.RegistrarPrestamo(nuevoPrestamo);

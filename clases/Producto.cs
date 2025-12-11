@@ -8,25 +8,12 @@ namespace SistemaDeInventarioASOEM.clases
 {
     public class Producto
     {
-        // La Columna se llama "IDproducto" y es la Clave Primaria
         public int IDproducto { get; set; }
-
-        // La Columna se llama "producto"
-        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
         public string? producto { get; set; }
-
-        // La Columna se llama "cantidadStock"
         public int cantidadStock { get; set; }
-
-        // La Columna se llama "marca"
-        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
         public string? marca { get; set; }
-
-        // La Columna se llama "modelo"
-        // CAMBIO: Se agregó '?' para indicar que puede ser nulo
         public string? modelo { get; set; }
-
-        // La Columna se llama "cantidadPrestada"
         public int cantidadPrestada { get; set; }
+        public string DescripcionCompleta => $"{producto} {modelo} {marca}";
     }
 }

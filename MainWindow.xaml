@@ -46,6 +46,7 @@
 
 
             <Button Content="Generar orden" 
+                    Command="{Binding AbrirGenerarOrdenCommand}"
                     Background="#9B59B6" Foreground="White" FontWeight="Bold"
                     Width="130" Height="40" Margin="5"/>
         </StackPanel>

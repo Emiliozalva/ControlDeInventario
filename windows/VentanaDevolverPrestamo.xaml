@@ -1,0 +1,30 @@
+﻿<Window x:Class="SistemaDeInventarioASOEM.windows.VentanaDevolverPrestamo"
+        Icon="/ncs/logo.ico"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Devolver Préstamo" Height="250" Width="350"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+
+    <Border Padding="20" Background="#FFF5F5">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Devolución de Préstamo" FontSize="18" FontWeight="Bold" 
+                       Foreground="#C0392B" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <TextBlock Text="Ingrese el ID del Préstamo:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+
+            <TextBox Text="{Binding IdPrestamoInput, UpdateSourceTrigger=PropertyChanged}" 
+                     Height="35" FontSize="14" VerticalContentAlignment="Center" 
+                     HorizontalContentAlignment="Center" FontWeight="Bold"
+                     Margin="0,0,0,20"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Cancelar" Command="{Binding CancelarCommand}" 
+                        Width="100" Height="35" Margin="0,0,10,0"/>
+
+                <Button Content="CONFIRMAR" Command="{Binding ConfirmarDevolucionCommand}" 
+                        Width="120" Height="35" 
+                        Background="#C0392B" Foreground="White" FontWeight="Bold"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>
