@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaDeInventarioASOEM", "SistemaDeInventarioASOEM.csproj", "{0193E877-3C5C-4742-8470-7ADA8EC2E94E}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "InstaladorInventario", "..\InstaladorInventario\InstaladorInventario.vdproj", "{8AD04A8B-E893-CE4E-9327-A6887A3E966B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{0193E877-3C5C-4742-8470-7ADA8EC2E94E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0193E877-3C5C-4742-8470-7ADA8EC2E94E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0193E877-3C5C-4742-8470-7ADA8EC2E94E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AD04A8B-E893-CE4E-9327-A6887A3E966B}.Debug|Any CPU.ActiveCfg = Debug
+		{8AD04A8B-E893-CE4E-9327-A6887A3E966B}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

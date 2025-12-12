@@ -20,8 +20,6 @@ namespace SistemaDeInventarioASOEM.windows
         public VentanaDevolverPrestamo()
         {
             InitializeComponent();
-
-            // Conectar el cierre de ventana
             this.DataContextChanged += (s, e) =>
             {
                 if (e.NewValue is VentanaDevolverPrestamoViewModel vm)

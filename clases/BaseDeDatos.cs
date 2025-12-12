@@ -61,8 +61,6 @@ namespace SistemaDeInventarioASOEM.clases
             using (var connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-
-                // Tabla Stock
                 connection.Execute(@"
                     CREATE TABLE IF NOT EXISTS stock (
                         IDproducto INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -89,9 +87,6 @@ namespace SistemaDeInventarioASOEM.clases
 ");
             }
         }
-
-        // --- MÉTODOS DE PRODUCTOS ---
-
         public List<Producto> ObtenerTodosLosProductos()
         {
             using (var connection = new SqliteConnection(_connectionString))
@@ -122,47 +117,49 @@ namespace SistemaDeInventarioASOEM.clases
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
-                // Intentamos ver si el término es un número (ID) o texto (Nombre)
-                bool esId = int.TryParse(terminoBusqueda, out int idPosible);
+                connection.Open();
+                string sqlFind = "SELECT IDproducto FROM stock WHERE IDproducto = @val OR producto = @val COLLATE NOCASE LIMIT 1";
 
-                string sql;
-                int filasAfectadas = 0;
+                int.TryParse(terminoBusqueda, out int idPosible);
+                int? idEncontrado = connection.QueryFirstOrDefault<int?>(sqlFind, new { val = (idPosible > 0 ? idPosible.ToString() : terminoBusqueda) });
 
-                if (esId)
+                if (idEncontrado != null)
                 {
-                    // Si es número, intentamos borrar por ID
-                    sql = "DELETE FROM stock WHERE IDproducto = @id";
-                    filasAfectadas = connection.Execute(sql, new { id = idPosible });
+                    BorrarProducto(idEncontrado.Value);
+                    return true; 
                 }
 
-                // Si no se borró nada por ID (o no era número), intentamos borrar por Nombre
-                if (filasAfectadas == 0)
-                {
-                    // COLLATE NOCASE hace que no importe mayúsculas/minúsculas
-                    sql = "DELETE FROM stock WHERE producto = @nombre COLLATE NOCASE";
-                    filasAfectadas = connection.Execute(sql, new { nombre = terminoBusqueda });
-                }
-
-                return filasAfectadas > 0; // Retorna true si borró algo
+                return false; 
             }
         }
         public void BorrarProducto(int id)
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
+                connection.Open();
+                string sqlCheck = "SELECT COUNT(*) FROM prestamos WHERE idProducto = @id";
+                int cantidadPrestamos = connection.ExecuteScalar<int>(sqlCheck, new { id });
+
+                if (cantidadPrestamos > 0)
+                {
+                    throw new Exception($"No se puede eliminar el producto.\n\nEste producto aparece en {cantidadPrestamos} registro(s) de préstamos (activos o devueltos).\nPara mantener el historial, no se permite su eliminación.");
+                }
                 connection.Execute("DELETE FROM stock WHERE IDproducto = @Id;", new { Id = id });
             }
         }
-        // --- MÉTODOS DE PRÉSTAMOS (Nuevos) ---
+        
 
         public List<Prestamo> ObtenerTodosLosPrestamos()
         {
             using (var connection = new SqliteConnection(_connectionString))
             {
+               
                 string sql = @"
             SELECT 
                 p.*, 
-                s.producto AS NombreProducto 
+                s.producto, 
+                s.marca, 
+                s.modelo
             FROM prestamos p
             INNER JOIN stock s ON p.idProducto = s.IDproducto
             ORDER BY p.Id DESC";
@@ -176,13 +173,10 @@ namespace SistemaDeInventarioASOEM.clases
             using (var connection = new SqliteConnection(_connectionString))
             {
                 connection.Open();
-
-                // Iniciamos una TRANSACCIÓN: O se hace todo (insertar + descontar) o no se hace nada.
                 using (var transaction = connection.BeginTransaction())
                 {
                     try
                     {
-                        // 1. Verificar si el producto existe y tiene stock
                         string sqlCheck = "SELECT cantidadStock FROM stock WHERE IDproducto = @id";
                         int stockActual = connection.ExecuteScalar<int>(sqlCheck, new { id = prestamo.idProducto }, transaction);
 
@@ -191,16 +185,12 @@ namespace SistemaDeInventarioASOEM.clases
                             throw new Exception("No hay stock suficiente para realizar este préstamo.");
                         }
 
-                        // 2. Insertar el préstamo
-                        // Nota: Guardamos fecha1 como Ticks (long) porque tu DB lo pide INTEGER
                         string sqlInsert = @"
                             INSERT INTO prestamos (area, persona, fecha1, description, estado, idProducto) 
                             VALUES (@area, @persona, @fecha1, @description, 1, @idProducto);";
 
-                        // Estado 1 = Activo
                         connection.Execute(sqlInsert, prestamo, transaction);
 
-                        // 3. Actualizar el Stock (Resta 1 al stock disponible, Suma 1 a prestados)
                         string sqlUpdateStock = @"
                             UPDATE stock 
                             SET cantidadStock = cantidadStock - 1, 
@@ -209,14 +199,12 @@ namespace SistemaDeInventarioASOEM.clases
 
                         connection.Execute(sqlUpdateStock, new { idProducto = prestamo.idProducto }, transaction);
 
-                        // Si todo salió bien, confirmamos los cambios
                         transaction.Commit();
                     }
                     catch (Exception)
                     {
-                        // Si algo falló, deshacemos todo
                         transaction.Rollback();
-                        throw; // Re-lanzamos el error para que lo vea la ventana
+                        throw; 
                     }
                 }
             }
@@ -231,14 +219,12 @@ namespace SistemaDeInventarioASOEM.clases
                 {
                     try
                     {
-                        // 1. Obtener el préstamo para saber qué producto es y si ya se devolvió
                         var prestamoDB = connection.QueryFirstOrDefault<Prestamo>(
                             "SELECT * FROM prestamos WHERE Id = @id", new { id = idPrestamo }, transaction);
 
                         if (prestamoDB == null) throw new Exception("El préstamo no existe.");
                         if (prestamoDB.estado == 0) throw new Exception("Este préstamo ya fue devuelto.");
 
-                        // 2. Marcar préstamo como devuelto (Estado 0) y poner fecha de fin
                         long fechaDevolucion = DateTime.Now.Ticks;
                         string sqlUpdatePrestamo = @"
                             UPDATE prestamos 
@@ -248,8 +234,6 @@ namespace SistemaDeInventarioASOEM.clases
 
                         connection.Execute(sqlUpdatePrestamo, new { fechaFin = fechaDevolucion, id = idPrestamo }, transaction);
 
-                        // 3. Devolver el stock (Suma 1 al stock disponible, Resta 1 a prestados)
-                        // Usamos MAX(0, ...) por seguridad para que 'cantidadPrestada' nunca sea negativo
                         string sqlUpdateStock = @"
                             UPDATE stock 
                             SET cantidadStock = cantidadStock + 1, 

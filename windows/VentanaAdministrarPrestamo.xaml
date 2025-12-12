@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SistemaDeInventarioASOEM.windows"
         mc:Ignorable="d"
-        Title="Administración de Préstamos" Height="500" Width="900"
+        Title="Administración de Préstamos" Height="500" Width="950"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -28,9 +28,9 @@
                     Width="140" Height="40" Margin="5"/>
 
             <Button Content="Devolver" 
-        Command="{Binding DevolverPrestamoCommand}" 
-        Background="#C0392B" Foreground="White" FontWeight="Bold"
-        Width="140" Height="40" Margin="5"/>
+                    Command="{Binding DevolverPrestamoCommand}" 
+                    Background="#C0392B" Foreground="White" FontWeight="Bold"
+                    Width="140" Height="40" Margin="5"/>
         </StackPanel>
 
         <DataGrid Grid.Row="1" 
@@ -46,7 +46,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="40"/>
 
-                <DataGridTextColumn Header="Producto" Binding="{Binding NombreProducto}" Width="150" FontWeight="Bold"/>
+                <DataGridTextColumn Header="Producto Detallado" 
+                                    Binding="{Binding DescripcionCompleta}" 
+                                    Width="250" FontWeight="Bold"/>
 
                 <DataGridTextColumn Header="Empleado" Binding="{Binding persona}" Width="120"/>
 

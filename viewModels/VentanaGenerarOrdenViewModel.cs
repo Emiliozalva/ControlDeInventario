@@ -15,11 +15,11 @@ namespace SistemaDeInventarioASOEM.viewModels
         private readonly BaseDeDatos _dbService;
         public Action? SolicitudCerrar;
 
-        // --- LISTAS ---
+     
         [ObservableProperty] private ObservableCollection<Producto> _productosInventario;
         [ObservableProperty] private ObservableCollection<ItemOrden> _detalleOrden;
 
-        // --- INPUTS ---
+     
         [ObservableProperty] private Producto? _productoSeleccionado;
         [ObservableProperty] private string _nombreProductoManual = string.Empty;
         [ObservableProperty] private int _cantidadInput = 1;
@@ -86,7 +86,6 @@ namespace SistemaDeInventarioASOEM.viewModels
                 Cantidad = CantidadInput
             });
 
-            // Resetear inputs
             NombreProductoManual = string.Empty;
             CantidadInput = 1;
         }
@@ -100,8 +99,6 @@ namespace SistemaDeInventarioASOEM.viewModels
             }
         }
 
-        // --- GENERACIÓN DEL EXCEL ---
-
         [RelayCommand]
         private void GenerarExcel()
         {
@@ -113,7 +110,6 @@ namespace SistemaDeInventarioASOEM.viewModels
 
             try
             {
-                // 1. RUTA DE PLANTILLA
                 string carpetaBase = AppDomain.CurrentDomain.BaseDirectory;
                 string rutaPlantilla = Path.Combine(carpetaBase, "ncs", "PlanillaDeElementos.xlsx");
 
@@ -123,16 +119,13 @@ namespace SistemaDeInventarioASOEM.viewModels
                     return;
                 }
 
-                // 2. MODIFICAR EXCEL
                 using (var workbook = new XLWorkbook(rutaPlantilla))
                 {
                     var hoja = workbook.Worksheet(1);
 
-                    // A. Limpiar rangos previos
                     hoja.Range("B9:B18").Clear(XLClearOptions.Contents);
                     hoja.Range("F9:F18").Clear(XLClearOptions.Contents);
 
-                    // B. Escribir los datos
                     int filaInicial = 9;
 
                     for (int i = 0; i < _detalleOrden.Count; i++)
@@ -140,27 +133,24 @@ namespace SistemaDeInventarioASOEM.viewModels
                         var item = _detalleOrden[i];
                         int filaActual = filaInicial + i;
 
-                        hoja.Cell(filaActual, 2).Value = item.Nombre;   // Columna B
-                        hoja.Cell(filaActual, 6).Value = item.Cantidad; // Columna F
+                        hoja.Cell(filaActual, 2).Value = item.Nombre;   
+                        hoja.Cell(filaActual, 6).Value = item.Cantidad; 
                     }
 
-                    // C. Fecha en D2
                     hoja.Cell("D2").Value = DateTime.Now.ToString("dd/MM/yyyy");
 
-                    // 3. GUARDAR
                     string nombreArchivo = $"Orden_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
                     string rutaEscritorio = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     string rutaFinal = Path.Combine(rutaEscritorio, nombreArchivo);
 
                     workbook.SaveAs(rutaFinal);
 
-                    // --- 4. ABRIR EL ARCHIVO AUTOMÁTICAMENTE ---
                     try
                     {
                         var p = new System.Diagnostics.Process();
                         p.StartInfo = new System.Diagnostics.ProcessStartInfo(rutaFinal)
                         {
-                            UseShellExecute = true // Esto es obligatorio en .NET moderno para abrir archivos
+                            UseShellExecute = true 
                         };
                         p.Start();
                     }
@@ -168,8 +158,6 @@ namespace SistemaDeInventarioASOEM.viewModels
                     {
                         MessageBox.Show("El archivo se generó pero no se pudo abrir automáticamente.", "Aviso");
                     }
-
-                    // Cerrar la ventana de generar orden
                     SolicitudCerrar?.Invoke();
                 }
             }

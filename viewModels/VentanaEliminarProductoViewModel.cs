@@ -32,16 +32,27 @@ namespace SistemaDeInventarioASOEM.viewModels
                                 "Confirmar Eliminación",
                                 MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                bool exito = _dbService.BorrarProducto(TerminoInput!);
+                try
+                {
+                    // Llamamos a borrar. 
+                    // Si el producto tiene préstamos, ESTA LÍNEA lanzará la Excepción del mensaje "No se puede eliminar..."
+                    bool exito = _dbService.BorrarProducto(TerminoInput!);
 
-                if (exito)
-                {
-                    MessageBox.Show("Producto eliminado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-                    SolicitudCerrar?.Invoke();
+                    if (exito)
+                    {
+                        MessageBox.Show("Producto eliminado correctamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        SolicitudCerrar?.Invoke();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró ningún producto con ese Nombre o ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("No se encontró ningún producto con ese Nombre o ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // AQUÍ ATRAPAMOS EL ERROR DE PROTECCIÓN
+                    // Mostramos el mensaje que escribimos en la BaseDeDatos (ej: "Este producto aparece en 3 préstamos...")
+                    MessageBox.Show(ex.Message, "No se puede eliminar", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
